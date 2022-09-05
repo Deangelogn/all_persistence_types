@@ -1,53 +1,36 @@
-import 'package:all_persistences_types/sqlite/add.dart';
-import 'package:all_persistences_types/sqlite/daos/PersonDao.dart';
-import 'package:all_persistences_types/sqlite/models/person.dart';
+import 'package:all_persistences_types/floor/add.dart';
+import 'package:all_persistences_types/floor/models/Book.dart';
 import 'package:flutter/material.dart';
 
-class ListSQLiteWidget extends StatefulWidget {
-  const ListSQLiteWidget({Key? key}) : super(key: key);
+class ListFloorWidget extends StatefulWidget {
+  const ListFloorWidget({Key? key}) : super(key: key);
 
-  final title = const Text("SQLite - Lista Pessoas");
+  final title = const Text("Floor - Lista de Livros");
 
   @override
-  _ListSQLiteWidgetState createState() => _ListSQLiteWidgetState();
+  _ListFloorWidgetState createState() => _ListFloorWidgetState();
 }
 
-class _ListSQLiteWidgetState extends State<ListSQLiteWidget> {
-  List<Person> persons = [];
-  late PersonDao dao;
+class _ListFloorWidgetState extends State<ListFloorWidget> {
+  List<Book> books = [];
 
   @override
   void initState() {
     super.initState();
-    dao = PersonDao();
-    getAllPersons();
+    
+    getAll();
   }
 
-  getAllPersons() async {
-    final result = await dao.readAll();
-    setState(() {
-      persons = result;
-    });
+  getAll() async {
+    
   }
 
-  insertPerson(Person person) async {
-    final id = await dao.insertPerson(person);
-    if (id > 0) {
-      setState(() {
-        person.id = id;
-        persons.add(person);
-      });
-    }
+  insert() async {
+    
   }
 
-  deletePerson(int index) async {
-    Person p = persons[index];
-    if (p.id != null) {
-      await dao.deletePerson(p.id!);
-      setState(() {
-        persons.removeAt(index);
-      });
-    }
+  delete(int index) async {
+    
   }
 
   @override
@@ -59,10 +42,10 @@ class _ListSQLiteWidgetState extends State<ListSQLiteWidget> {
           IconButton(
               onPressed: () {
                 Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => AddPerson()))
-                    .then((person) {
+                        MaterialPageRoute(builder: (context) => AddBook()))
+                    .then((book) {
                   setState(() {
-                    insertPerson(person);
+                    //insert();
                   });
                 });
               },
@@ -72,12 +55,12 @@ class _ListSQLiteWidgetState extends State<ListSQLiteWidget> {
       body: ListView.separated(
           itemBuilder: (context, index) => buildListItem(index),
           separatorBuilder: (context, index) => const Divider(height: 1),
-          itemCount: persons.length),
+          itemCount: books.length),
     );
   }
 
   Widget buildListItem(int index) {
-    Person p = persons[index];
+    Book p = books[index];
     return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: Container(
@@ -86,10 +69,10 @@ class _ListSQLiteWidgetState extends State<ListSQLiteWidget> {
               borderRadius: BorderRadius.circular(5)),
           child: ListTile(
               leading: Text(p.id != null ? p.id.toString() : "-1"),
-              title: Text(p.firstName),
-              subtitle: Text(p.lastName),
+              title: Text(p.name),
+              subtitle: Text(p.author),
               onLongPress: () {
-                deletePerson(index);
+                delete(index);
               }),
         ));
   }
